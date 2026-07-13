@@ -1,14 +1,14 @@
 # GrowthPilot AI
 
-GrowthPilot AI is an AI-powered growth command center for monitoring acquisition, activation, and revenue signals. Version `0.1.0` establishes the frontend foundation with React, TypeScript, Vite, React Router, and Material UI.
+GrowthPilot AI is an AI-powered growth command center for monitoring acquisition, activation, and revenue signals. Version `0.2.0` establishes the AI Workspace foundation with React, TypeScript, Vite, React Router, and Material UI.
 
 ## Features
 
+- Premium AI Workspace that answers: "What should I do today to grow?"
+- Service-backed mock dashboard data shaped like a future API contract.
+- Reusable TrendCard, KpiCard, DashboardCard, SectionHeader, PriorityChip, and ActionItem components.
 - Responsive dashboard shell with desktop sidebar and mobile drawer navigation.
-- Material UI theme with GrowthPilot brand colors, typography, and component defaults.
-- Top navigation with search, notifications, and user profile affordances.
-- Routed placeholder pages for Dashboard, Campaigns, Audiences, and Insights.
-- Placeholder analytics cards, trend modules, and recommended growth plays ready for data integration.
+- Loading, empty, and error states prepared for future backend APIs.
 
 ## Tech Stack
 
@@ -55,6 +55,11 @@ npm run lint
 src/
   app/          Application composition
   features/     Feature-level pages and modules
+    dashboard/
+      components/  Reusable dashboard UI primitives
+      data/        Mock dashboard data
+      services/    Future API-shaped mock services
+      types/       Feature TypeScript contracts
   layouts/      Shared app shells and layout components
   routes/       Route declarations
   theme/        Material UI theme configuration
