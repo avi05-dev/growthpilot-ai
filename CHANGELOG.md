@@ -2,6 +2,24 @@
 
 All notable changes to GrowthPilot AI will be documented in this file.
 
+## [0.4.0] - 2026-07-13
+
+### Added
+
+- Added PostgreSQL persistence configuration through `DATABASE_URL`.
+- Added SQLAlchemy models for domains, knowledge items, and recommendations.
+- Added Alembic migration support for the persistence tables and indexes.
+- Added repository and service layers for database-backed domains, knowledge, recommendations, dashboard, and trends.
+- Added database-backed API endpoints for domains, knowledge, and recommendations.
+- Added a seed script for the Technology domain, 10 knowledge items, and 10 recommendations.
+- Added backend tests for repositories, services, and API endpoints with an in-memory database override.
+- Added database documentation and GPS-0004A implementation review notes.
+
+### Changed
+
+- Replaced remaining backend mock repository usage with database-backed services.
+- Updated frontend API typing to support database-backed dashboard recommendation and trend data.
+
 ## [0.3.0] - 2026-07-13
 
 ### Added
