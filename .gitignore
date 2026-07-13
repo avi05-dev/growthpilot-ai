@@ -1,5 +1,15 @@
 node_modules
 dist
+.idea/
+.venv/
+backend/.venv/
+frontend/dist/
+frontend/node_modules/
+frontend/package-lock.json
+package-lock.json
+__pycache__/
+*.py[cod]
+.pytest_cache/
 .env
 .env.*
 !.env.example
@@ -8,3 +18,13 @@ coverage
 .vite
 
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# frontend build outputs
+frontend/dist/
+frontend/node_modules/

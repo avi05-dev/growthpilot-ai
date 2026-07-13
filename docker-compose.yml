@@ -1,0 +1,19 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      GROWTHPILOT_ENVIRONMENT: development
+      GROWTHPILOT_CORS_ORIGINS: '["http://localhost:5173", "http://localhost:3000", "http://localhost"]'
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
