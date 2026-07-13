@@ -6,6 +6,8 @@
 cd frontend
 npm install
 cp .env.example .env
+# VITE_API_BASE_URL is optional at runtime; when omitted the client uses same-origin requests.
+# VITE_BACKEND_PROXY_TARGET enables the Vite dev proxy for local backend calls.
 npm run dev
 ```
 
