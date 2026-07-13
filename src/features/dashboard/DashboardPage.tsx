@@ -33,8 +33,15 @@ export function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    void loadDashboard();
-  }, [loadDashboard]);
+    void getDashboardData()
+      .then((data) => {
+        setDashboardData(data);
+        setLoadState(data.trends.length === 0 ? 'empty' : 'success');
+      })
+      .catch(() => {
+        setLoadState('error');
+      });
+  }, []);
 
   const trendsByCategory = useMemo(() => {
     return trendCategories.map((category) => ({
@@ -53,8 +60,8 @@ export function DashboardPage() {
 
       {loadState === 'success' && dashboardData ? (
         <Stack spacing={{ xs: 3, md: 4 }}>
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} lg={7}>
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
+            <Grid size={{ xs: 12, lg: 7 }}>
               <DashboardCard>
                 <Stack spacing={3}>
                   <SectionHeader eyebrow="AI Daily Briefing" title={dashboardData.briefing.title} description="A concise operating brief for deciding what to do today." />
@@ -67,9 +74,9 @@ export function DashboardPage() {
                     ))}
                   </Stack>
                   <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.5, bgcolor: 'background.default' }}>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between' }}>
                       <Box>
-                        <Typography variant="body2" color="text.secondary" fontWeight={800}>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800 }}>
                           Best posting window
                         </Typography>
                         <Typography variant="h6" sx={{ mt: 0.5 }}>
@@ -80,7 +87,7 @@ export function DashboardPage() {
                     </Stack>
                   </Box>
                   <Box>
-                    <Typography variant="body2" color="text.secondary" fontWeight={800}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800 }}>
                       Recommended Focus
                     </Typography>
                     <Typography variant="h6" component="p" sx={{ mt: 0.75 }}>
@@ -91,14 +98,14 @@ export function DashboardPage() {
               </DashboardCard>
             </Grid>
 
-            <Grid item xs={12} lg={5}>
+            <Grid size={{ xs: 12, lg: 5 }}>
               <DashboardCard>
                 <Stack spacing={3}>
                   <SectionHeader eyebrow="Content Studio" title="Preview" description="Draft recommendations prepared from today's strongest signals." />
                   <Stack spacing={2}>
                     {dashboardData.contentRecommendations.map((recommendation) => (
                       <Box key={recommendation.id} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2 }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+                        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
                           <Box>
                             <Chip label={recommendation.channel} size="small" variant="outlined" />
                             <Typography variant="h6" component="h3" sx={{ mt: 1 }}>
@@ -127,7 +134,7 @@ export function DashboardPage() {
                   </Typography>
                   <Grid container spacing={2.5}>
                     {trends.map((trend) => (
-                      <Grid key={trend.id} item xs={12} md={6} xl={4}>
+                      <Grid key={trend.id} size={{ xs: 12, md: 6, xl: 4 }}>
                         <TrendCard trend={trend} />
                       </Grid>
                     ))}
@@ -137,8 +144,8 @@ export function DashboardPage() {
             </Stack>
           </Box>
 
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} lg={6}>
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
+            <Grid size={{ xs: 12, lg: 6 }}>
               <DashboardCard>
                 <Stack spacing={3}>
                   <SectionHeader eyebrow="Action Center" title="What should I do today?" description="A prioritized plan for learning, creating, and publishing." />
@@ -150,12 +157,12 @@ export function DashboardPage() {
                 </Stack>
               </DashboardCard>
             </Grid>
-            <Grid item xs={12} lg={6}>
+            <Grid size={{ xs: 12, lg: 6 }}>
               <Stack spacing={3}>
                 <SectionHeader eyebrow="Growth Snapshot" title="This week's momentum" description="Reusable KPI cards prepared for future analytics APIs." />
                 <Grid container spacing={2.5}>
                   {dashboardData.kpis.map((metric) => (
-                    <Grid key={metric.id} item xs={12} sm={6}>
+                    <Grid key={metric.id} size={{ xs: 12, sm: 6 }}>
                       <KpiCard metric={metric} />
                     </Grid>
                   ))}

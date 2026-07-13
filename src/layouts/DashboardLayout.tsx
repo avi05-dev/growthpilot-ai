@@ -41,12 +41,12 @@ const navigationItems = [
 function SidebarContent() {
   return (
     <Stack sx={{ height: '100%', bgcolor: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(24px)' }}>
-      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ px: 3, py: 3 }}>
+      <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', px: 3, py: 3 }}>
         <Avatar sx={{ bgcolor: 'primary.main', boxShadow: designTokens.shadows.card }}>
           <AutoAwesomeIcon />
         </Avatar>
         <Box>
-          <Typography variant="h6" lineHeight={1}>
+          <Typography variant="h6" sx={{ lineHeight: 1 }}>
             GrowthPilot AI
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -78,14 +78,14 @@ function SidebarContent() {
             }}
           >
             <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 800 }} />
+            <ListItemText primary={<Typography sx={{ fontWeight: 800 }}>{item.label}</Typography>} />
           </ListItemButton>
         ))}
       </List>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ p: 3 }}>
         <Box sx={{ borderRadius: 4, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', p: 2.5 }}>
-          <Typography fontWeight={900}>Daily operating question</Typography>
+          <Typography sx={{ fontWeight: 900 }}>Daily operating question</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
             What should I do today to grow?
           </Typography>
@@ -128,18 +128,20 @@ export function DashboardLayout() {
             placeholder="Search trends, drafts, tasks..."
             aria-label="Search GrowthPilot workspace"
             sx={{ maxWidth: 460, flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-            InputProps={{
-              startAdornment: (
+            slotProps={{
+              input: {
+                startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
+              },
             }}
           />
           <Box sx={{ flexGrow: 1 }} />
-          <Stack direction="row" spacing={1.5} alignItems="center">
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
             <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'right' }}>
-              <Typography variant="body2" fontWeight={800}>
+              <Typography variant="body2" sx={{ fontWeight: 800 }}>
                 Maya Chen
               </Typography>
               <Typography variant="caption" color="text.secondary">

@@ -12,8 +12,8 @@ export function KpiCard({ metric }: KpiCardProps) {
   return (
     <DashboardCard aria-label={`${metric.label}: ${metric.value}`}>
       <Stack spacing={2}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="body2" color="text.secondary" fontWeight={700}>
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 700 }}>
             {metric.label}
           </Typography>
           <Box sx={{ color: 'success.main', display: 'grid', placeItems: 'center' }}>

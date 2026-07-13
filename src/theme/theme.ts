@@ -1,4 +1,4 @@
-import { alpha, createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 import { designTokens } from './tokens';
 
@@ -105,9 +105,7 @@ export const theme = createTheme({
           borderRadius: designTokens.radii.pill,
           paddingInline: 18,
         },
-        containedPrimary: {
-          background: `linear-gradient(135deg, ${designTokens.colors.brand} 0%, ${alpha(designTokens.colors.brandAccent, 0.92)} 100%)`,
-        },
+
       },
     },
     MuiChip: {

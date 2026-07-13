@@ -12,7 +12,7 @@ export function TrendCard({ trend }: TrendCardProps) {
   return (
     <DashboardCard>
       <Stack spacing={2.25}>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
           <Box>
             <Typography variant="h6" component="h3">
               {trend.title}
@@ -25,18 +25,18 @@ export function TrendCard({ trend }: TrendCardProps) {
         </Stack>
 
         <Box>
-          <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.75 }}>
-            <Typography variant="caption" color="text.secondary" fontWeight={800}>
+          <Stack direction="row" sx={{ justifyContent: 'space-between', mb: 0.75 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 800 }}>
               Trend score
             </Typography>
-            <Typography variant="caption" fontWeight={900}>
+            <Typography variant="caption" sx={{ fontWeight: 900 }}>
               {trend.score}/100
             </Typography>
           </Stack>
           <LinearProgress variant="determinate" value={trend.score} aria-label={`${trend.title} trend score`} sx={{ height: 8, borderRadius: 999 }} />
         </Box>
 
-        <Stack direction="row" flexWrap="wrap" gap={1} aria-label={`${trend.title} mock sources`}>
+        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1 }} aria-label={`${trend.title} mock sources`}>
           {trend.sources.map((source) => (
             <Chip key={source} label={source} variant="outlined" size="small" />
           ))}
