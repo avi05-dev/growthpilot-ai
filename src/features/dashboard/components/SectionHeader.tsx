@@ -10,7 +10,7 @@ export function SectionHeader({ eyebrow, title, description }: SectionHeaderProp
   return (
     <Stack spacing={0.75} component="header">
       {eyebrow ? (
-        <Typography variant="overline" color="secondary" fontWeight={800} letterSpacing={1.2}>
+        <Typography variant="overline" color="secondary" sx={{ fontWeight: 800, letterSpacing: 1.2 }}>
           {eyebrow}
         </Typography>
       ) : null}
