@@ -49,7 +49,7 @@ export function DashboardPage({ pageTitle = 'Dashboard' }: DashboardPageProps) {
 
       <Grid container spacing={3}>
         {metricCards.map((card) => (
-          <Grid key={card.label} size={{ xs: 12, sm: 6, xl: 3 }}>
+          <Grid key={card.label} item xs={12} sm={6} xl={3}>
             <Card>
               <CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
@@ -79,7 +79,7 @@ export function DashboardPage({ pageTitle = 'Dashboard' }: DashboardPageProps) {
       </Grid>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        <Grid item xs={12} lg={8}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6">Revenue momentum</Typography>
@@ -100,7 +100,7 @@ export function DashboardPage({ pageTitle = 'Dashboard' }: DashboardPageProps) {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid item xs={12} lg={4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6">Recommended growth plays</Typography>
