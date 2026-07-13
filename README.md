@@ -1,69 +1,89 @@
 # GrowthPilot AI
 
-GrowthPilot AI is an AI-powered growth command center for monitoring acquisition, activation, and revenue signals. Version `0.2.0` establishes the AI Workspace foundation with React, TypeScript, Vite, React Router, and Material UI.
+GrowthPilot AI is an AI-powered growth command center for monitoring acquisition, activation, and revenue signals. Version `0.3.0` transitions the project from a frontend prototype into a production-ready full-stack foundation.
 
-## Features
+## v0.3.0 Architecture
 
-- Premium AI Workspace that answers: "What should I do today to grow?"
-- Service-backed mock dashboard data shaped like a future API contract.
-- Reusable TrendCard, KpiCard, DashboardCard, SectionHeader, PriorityChip, and ActionItem components.
-- Responsive dashboard shell with desktop sidebar and mobile drawer navigation.
-- Loading, empty, and error states prepared for future backend APIs.
+```text
+React Frontend
+  ↓
+REST API
+  ↓
+FastAPI
+  ↓
+Service Layer
+  ↓
+Repository Layer
+  ↓
+Mock Data
+```
 
-## Tech Stack
+The frontend no longer reads local mock data. Dashboard, trend, and recommendation data is served by the FastAPI backend through REST APIs.
+
+## Repository Structure
+
+```text
+frontend/        React + TypeScript + Vite application
+backend/         FastAPI application, services, repositories, schemas, tests
+docs/            Architecture, API, backend, and setup documentation
+infrastructure/  Future deployment and database infrastructure assets
+.github/         CI workflows
+```
+
+## Frontend
 
 - React + TypeScript
 - Vite
 - Material UI + Emotion
 - React Router
-- ESLint
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20 or newer
-- npm 10 or newer
-
-### Installation
+- Axios
+- TanStack Query
 
 ```bash
+cd frontend
 npm install
-```
-
-### Development
-
-```bash
 npm run dev
-```
-
-### Production Build
-
-```bash
 npm run build
 ```
 
-### Linting
+## Backend
+
+- Python 3.12
+- FastAPI
+- Pydantic v2
+- SQLAlchemy 2
+- Alembic
+- pytest
 
 ```bash
-npm run lint
+cd backend
+pip install -r requirements.txt
+pytest
+uvicorn app.main:app --reload
 ```
 
-## Project Structure
+## Docker
 
-```text
-src/
-  app/          Application composition
-  features/     Feature-level pages and modules
-    dashboard/
-      components/  Reusable dashboard UI primitives
-      data/        Mock dashboard data
-      services/    Future API-shaped mock services
-      types/       Feature TypeScript contracts
-  layouts/      Shared app shells and layout components
-  routes/       Route declarations
-  theme/        Material UI theme configuration
+```bash
+docker compose up --build
 ```
+
+Frontend: http://localhost:5173
+Backend: http://localhost:8000
+
+## API Documentation
+
+When the backend is running:
+
+- Swagger UI: http://localhost:8000/docs
+- OpenAPI JSON: http://localhost:8000/openapi.json
+
+## Documentation
+
+- [Architecture](./docs/Architecture.md)
+- [Backend](./docs/Backend.md)
+- [API](./docs/API.md)
+- [Development Setup](./docs/DevelopmentSetup.md)
 
 ## Release Notes
 
