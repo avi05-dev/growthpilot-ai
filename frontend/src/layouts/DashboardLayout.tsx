@@ -128,14 +128,12 @@ export function DashboardLayout() {
             placeholder="Search trends, drafts, tasks..."
             aria-label="Search GrowthPilot workspace"
             sx={{ maxWidth: 460, flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-            slotProps={{
-              input: {
-                startAdornment: (
+            InputProps={{
+              startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
-              },
             }}
           />
           <Box sx={{ flexGrow: 1 }} />
