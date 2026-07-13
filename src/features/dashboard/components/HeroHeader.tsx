@@ -33,7 +33,7 @@ export function HeroHeader({ onRefresh }: HeroHeaderProps) {
     >
       <Box sx={{ position: 'absolute', inset: 'auto -12% -45% auto', width: 360, height: 360, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.12)' }} />
       <Stack spacing={3} sx={{ position: 'relative' }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2} flexWrap="wrap">
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
           <Box>
             <Typography variant="overline" sx={{ opacity: 0.78, fontWeight: 900 }}>
               Good Morning 👋
@@ -47,7 +47,7 @@ export function HeroHeader({ onRefresh }: HeroHeaderProps) {
           </Box>
           <Chip label="Mock Data" sx={{ bgcolor: 'rgba(255,255,255,0.16)', color: 'inherit', border: '1px solid rgba(255,255,255,0.22)' }} />
         </Stack>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ alignItems: { sm: 'center' } }}>
           <Button variant="contained" color="secondary" startIcon={<RefreshIcon />} onClick={onRefresh} aria-label="Refresh briefing mock data">
             Refresh Briefing
           </Button>
