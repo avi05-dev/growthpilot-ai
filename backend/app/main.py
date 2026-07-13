@@ -12,13 +12,19 @@ from app.middleware.logging import RequestLoggingMiddleware
 configure_logging()
 settings = get_settings()
 
-app = FastAPI(title=settings.app_name, version=settings.version)
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.version,
+    description="REST API foundation for the GrowthPilot AI workspace.",
+    docs_url="/docs",
+    openapi_url="/openapi.json",
+)
 
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
