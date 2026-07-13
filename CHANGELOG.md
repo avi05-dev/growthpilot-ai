@@ -2,6 +2,23 @@
 
 All notable changes to GrowthPilot AI will be documented in this file.
 
+## [0.3.0] - 2026-07-13
+
+### Added
+
+- Converted the project into a frontend/backend monorepo.
+- Added a FastAPI backend with API, service, repository, schema, middleware, dependency, and test layers.
+- Added REST endpoints for health, version, dashboard, trends, and recommendations.
+- Added Axios and TanStack Query frontend API integration.
+- Added Docker support for frontend and backend.
+- Added GitHub Actions CI for frontend build and backend tests.
+- Added backend, API, architecture, and development setup documentation.
+
+### Changed
+
+- Moved mock dashboard data out of the frontend and into backend repositories.
+- Updated the frontend to consume backend APIs exclusively.
+
 ## [0.2.0] - 2026-07-13
 
 ### Added
