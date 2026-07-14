@@ -6,6 +6,21 @@ All notable changes to GrowthPilot AI will be documented in this file.
 
 ### Added
 
+#### GPS-0004B - Knowledge Intelligence Engine
+
+- Added the reusable, domain-independent Knowledge Intelligence Engine module for component scoring, weighted Intelligence Score calculation, priority classification, and processing schemas.
+- Added the initial Technology domain registry configuration for authority sources, relevance keywords, momentum categories, and configurable priority thresholds.
+- Added intelligence persistence fields to knowledge items, including component scores, overall score, priority, processing status, and processed timestamp.
+- Added Alembic migration `0002_add_intelligence_fields` for the new intelligence columns.
+- Added repository-backed intelligence service and orchestration pipeline for processing pending knowledge items.
+- Added `POST /api/intelligence/process` and `GET /api/intelligence/health` endpoints.
+- Added intelligence metadata to knowledge API responses.
+- Added dashboard display for overall Intelligence Score, priority, processing status, and expandable component scores.
+- Added Knowledge Intelligence Engine documentation and GPS-0004B review notes.
+- Added backend tests for scoring, ranking, pipeline, service, repository, and API coverage.
+
+#### GPS-0004A - PostgreSQL Persistence
+
 - Added PostgreSQL persistence configuration through `DATABASE_URL`.
 - Added SQLAlchemy models for domains, knowledge items, and recommendations.
 - Added Alembic migration support for the persistence tables and indexes.
