@@ -4,7 +4,7 @@ export type DashboardLoadState = 'loading' | 'success' | 'empty' | 'error';
 
 export type TrendCategory = 'AI' | 'Development' | 'Career';
 
-export type TrendSource = 'GitHub' | 'Reddit' | 'Hacker News' | 'Dev.to';
+export type TrendSource = 'GitHub' | 'Reddit' | 'Hacker News' | 'Dev.to' | string;
 
 export type BriefingItem = {
   id: string;
@@ -29,7 +29,7 @@ export type Trend = {
 
 export type ContentRecommendation = {
   id: string;
-  channel: 'LinkedIn' | 'X Thread' | 'Blog';
+  channel: string;
   topic: string;
   actionLabel: string;
 };

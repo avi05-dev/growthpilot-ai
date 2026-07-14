@@ -18,3 +18,16 @@ The frontend never imports mock data. All application data is retrieved through 
 ## v0.4.0 readiness
 
 SQLAlchemy and Alembic are installed and scaffolded so PostgreSQL models and migrations can be introduced without changing the API or frontend contracts.
+
+## GPS-0004A Persistence Layer
+
+GrowthPilot AI now uses PostgreSQL as the system of record for domains, knowledge items, and recommendations. FastAPI controllers depend on services, services coordinate business rules, and repositories contain SQLAlchemy persistence logic. Controllers do not execute SQL directly.
+
+The primary flow is:
+
+1. React Query calls the FastAPI `/api/*` endpoints.
+2. FastAPI resolves a database session from `DATABASE_URL`.
+3. Service classes call repository classes.
+4. SQLAlchemy models map to PostgreSQL tables managed by Alembic.
+
+The AI, LLM, external API, and recommendation-generation layers remain intentionally out of scope for this increment.
