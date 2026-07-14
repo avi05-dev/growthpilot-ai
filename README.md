@@ -104,3 +104,25 @@ uvicorn app.main:app --reload
 
 Frontend data fetching continues to use React Query against the FastAPI endpoints.
 When using Docker Compose, Postgres, migrations, and seed data all start with the stack.
+
+## GPS-0004B Knowledge Intelligence Engine
+
+Version `0.4.0` introduces the first Knowledge Intelligence Engine. Stored knowledge items can now be processed into explainable component scores, an overall Intelligence Score, a priority classification, and a processing status.
+
+```text
+Knowledge Item
+  ↓ Validation and domain configuration
+  ↓ Freshness, Authority, Relevance, Momentum, Confidence scores
+  ↓ Weighted Intelligence Score
+  ↓ Priority classification
+  ↓ Persisted results
+  ↓ Dashboard display
+```
+
+New endpoints:
+
+- `GET /api/intelligence/health` reports engine health and supported domains.
+- `POST /api/intelligence/process` processes all pending knowledge items.
+- `GET /api/knowledge` includes component scores, overall score, priority, status, and processed timestamp.
+
+The engine is domain-independent. Domain-specific scoring inputs currently live in the Technology domain registry and can later move to YAML or JSON configuration.

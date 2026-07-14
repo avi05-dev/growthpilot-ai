@@ -31,3 +31,21 @@ The primary flow is:
 4. SQLAlchemy models map to PostgreSQL tables managed by Alembic.
 
 The AI, LLM, external API, and recommendation-generation layers remain intentionally out of scope for this increment.
+
+## GPS-0004B Knowledge Intelligence Architecture
+
+The Knowledge Intelligence Engine is implemented as a reusable backend module under `backend/app/intelligence`. It does not contain Technology-specific rules. Domain configuration is supplied by `backend/app/domain/registry.py`, which currently registers the `technology` domain and prepares the codebase for future YAML or JSON domain configuration.
+
+```text
+FastAPI Intelligence API
+  ↓
+KnowledgeIntelligencePipeline
+  ↓
+KnowledgeIntelligenceService
+  ↓
+KnowledgeRepository
+  ↓
+KnowledgeItem persistence
+```
+
+The pipeline validates the item's domain, normalizes scoring inputs through the registry configuration, calculates component scores, computes the weighted overall score, assigns priority, persists the fields, and marks processing as completed or failed.

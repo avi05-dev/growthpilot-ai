@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.dashboard import router as dashboard_router
 from app.api.domains import router as domains_router
 from app.api.knowledge import router as knowledge_router
+from app.api.intelligence import router as intelligence_router
 from app.api.recommendations import router as recommendations_router
 from app.api.system import router as system_router
 from app.api.trends import router as trends_router
@@ -37,3 +38,4 @@ app.include_router(domains_router)
 app.include_router(knowledge_router)
 app.include_router(trends_router)
 app.include_router(recommendations_router)
+app.include_router(intelligence_router)

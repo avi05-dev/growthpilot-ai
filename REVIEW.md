@@ -1,20 +1,17 @@
-# GPS-0004A Review
+# GPS-0004B Review
 
 ## Implemented
 
-- PostgreSQL configuration through `DATABASE_URL`.
-- SQLAlchemy models for `Domain`, `KnowledgeItem`, and `Recommendation`.
-- Alembic migration for persistence tables and indexes.
-- Repository layer for domains, knowledge, and recommendations.
-- Service layer for domain, knowledge, recommendation, trend, and dashboard responses.
-- Database-backed FastAPI endpoints.
-- Seed script for Technology domain, 10 knowledge items, and 10 recommendations.
-- Frontend API clients for domain and knowledge endpoints plus existing React Query integration.
-- Repository, service, and API tests using an in-memory database override.
+- Added reusable Knowledge Intelligence Engine module.
+- Added Technology domain registry without hardcoding Technology rules in the engine.
+- Extended KnowledgeItem persistence and Alembic migration with component scores, overall score, priority, processing status, and processed timestamp.
+- Added repository-backed intelligence service and orchestration pipeline.
+- Added intelligence process and health APIs.
+- Extended knowledge API responses with intelligence fields.
+- Updated dashboard to display overall score, priority, processing status, and expandable component scores.
+- Added backend tests for scoring, ranking, pipeline, repository/service behavior, and APIs.
+- Updated README and documentation.
 
-## Out of scope
+## Non-goals preserved
 
-- AI implementation.
-- LLM integration.
-- External APIs.
-- Recommendation generation logic.
+No recommendation engine, LLM provider integration, content generation, scheduling, background workers, authentication, or publishing was added.

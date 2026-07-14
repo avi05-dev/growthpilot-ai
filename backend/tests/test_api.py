@@ -76,8 +76,20 @@ def test_knowledge_endpoints(client: TestClient) -> None:
     assert response.status_code == 200
     payload = response.json()
     assert len(payload["knowledge"]) == 10
+    assert "component_scores" in payload["knowledge"][0]
+    assert payload["knowledge"][0]["processing_status"] == "Pending"
     detail = client.get(f"/api/knowledge/{payload['knowledge'][0]['id']}")
     assert detail.status_code == 200
+
+
+def test_intelligence_endpoints(client: TestClient) -> None:
+    health = client.get("/api/intelligence/health")
+    assert health.status_code == 200
+    assert health.json()["supported_domains"] == ["technology"]
+
+    response = client.post("/api/intelligence/process")
+    assert response.status_code == 200
+    assert response.json()["processed"] == 10
 
 
 def test_trends_endpoint(client: TestClient) -> None:

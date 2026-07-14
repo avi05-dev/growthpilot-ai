@@ -1,11 +1,12 @@
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { Box, Button, Chip, Grid, Stack, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Grid, LinearProgress, Stack, Tooltip, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
 import { DashboardApi } from '../../api/dashboardApi';
+import { KnowledgeApi } from '../../api/knowledgeApi';
 import { RecommendationApi } from '../../api/recommendationApi';
 import { TrendApi } from '../../api/trendApi';
 import { ActionItem } from './components/ActionItem';
@@ -23,28 +24,29 @@ export function DashboardPage() {
   const dashboardQuery = useQuery({ queryKey: ['dashboard'], queryFn: DashboardApi.getDashboard });
   const trendsQuery = useQuery({ queryKey: ['trends'], queryFn: TrendApi.getTrends });
   const recommendationsQuery = useQuery({ queryKey: ['recommendations'], queryFn: RecommendationApi.getRecommendations });
+  const knowledgeQuery = useQuery({ queryKey: ['knowledge'], queryFn: KnowledgeApi.getKnowledge });
 
-  const isLoading = dashboardQuery.isLoading || trendsQuery.isLoading || recommendationsQuery.isLoading;
-  const isError = dashboardQuery.isError || trendsQuery.isError || recommendationsQuery.isError;
+  const isLoading = dashboardQuery.isLoading || trendsQuery.isLoading || recommendationsQuery.isLoading || knowledgeQuery.isLoading;
+  const isError = dashboardQuery.isError || trendsQuery.isError || recommendationsQuery.isError || knowledgeQuery.isError;
 
   const refreshDashboard = () => {
     void dashboardQuery.refetch();
     void trendsQuery.refetch();
     void recommendationsQuery.refetch();
+    void knowledgeQuery.refetch();
   };
 
   const trends = trendsQuery.data?.trends ?? [];
   const recommendations = recommendationsQuery.data?.recommendations ?? [];
+  const knowledgeItems = knowledgeQuery.data?.knowledge ?? [];
   const dashboardData = dashboardQuery.data;
 
-  const trendsByCategory = useMemo(() => {
-    return trendCategories.map((category) => ({
-      category,
-      trends: trends.filter((trend) => trend.category === category),
-    }));
-  }, [trends]);
+  const trendsByCategory = trendCategories.map((category) => ({
+    category,
+    trends: trends.filter((trend) => trend.category === category),
+  }));
 
-  const hasNoData = trends.length === 0 && recommendations.length === 0 && dashboardData?.actionTasks.length === 0;
+  const hasNoData = trends.length === 0 && recommendations.length === 0 && knowledgeItems.length === 0 && dashboardData?.actionTasks.length === 0;
 
   return (
     <Stack spacing={{ xs: 3, md: 4 }}>
@@ -119,6 +121,73 @@ export function DashboardPage() {
               </DashboardCard>
             </Grid>
           </Grid>
+
+
+
+          <Box component="section" aria-labelledby="knowledge-intelligence-heading">
+            <SectionHeader eyebrow="Knowledge Intelligence" title="Explainable signal importance" description="Stored knowledge items scored by freshness, authority, relevance, momentum, and confidence." />
+            <Grid container spacing={2.5} sx={{ mt: 1 }}>
+              {knowledgeItems.slice(0, 6).map((item) => {
+                const overallScore = item.overall_score ?? 0;
+                const scoreRows = [
+                  ['Freshness', item.component_scores.freshness],
+                  ['Authority', item.component_scores.authority],
+                  ['Relevance', item.component_scores.relevance],
+                  ['Momentum', item.component_scores.momentum],
+                  ['Confidence', item.component_scores.confidence],
+                ] as const;
+                return (
+                  <Grid key={item.id} item xs={12} md={6} xl={4}>
+                    <DashboardCard>
+                      <Stack spacing={2}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+                          <Box>
+                            <Typography id="knowledge-intelligence-heading" variant="overline" color="text.secondary" fontWeight={800}>
+                              {item.category}
+                            </Typography>
+                            <Typography variant="h6" component="h3">
+                              {item.title}
+                            </Typography>
+                          </Box>
+                          <Tooltip title="Priority is derived from the overall Intelligence Score.">
+                            <Chip label={item.priority ?? 'Unranked'} color={item.priority === 'Critical' ? 'error' : item.priority === 'High' ? 'warning' : 'default'} size="small" />
+                          </Tooltip>
+                        </Stack>
+                        <Box>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary" fontWeight={800}>
+                              Overall Intelligence Score
+                            </Typography>
+                            <Typography variant="h6">{Math.round(overallScore)}</Typography>
+                          </Stack>
+                          <LinearProgress variant="determinate" value={overallScore} sx={{ height: 8, borderRadius: 99 }} />
+                        </Box>
+                        <Chip label={`Status: ${item.processing_status}`} variant="outlined" size="small" sx={{ alignSelf: 'flex-start' }} />
+                        <Accordion disableGutters elevation={0} sx={{ bgcolor: 'transparent' }}>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography fontWeight={800}>Component Scores</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Stack spacing={1.25}>
+                              {scoreRows.map(([label, value]) => (
+                                <Box key={label}>
+                                  <Stack direction="row" justifyContent="space-between">
+                                    <Typography variant="body2">{label}</Typography>
+                                    <Typography variant="body2" fontWeight={800}>{value == null ? 'Pending' : Math.round(value)}</Typography>
+                                  </Stack>
+                                  <LinearProgress variant="determinate" value={value ?? 0} sx={{ height: 6, borderRadius: 99 }} />
+                                </Box>
+                              ))}
+                            </Stack>
+                          </AccordionDetails>
+                        </Accordion>
+                      </Stack>
+                    </DashboardCard>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
 
           <Box component="section" aria-labelledby="trend-radar-heading">
             <SectionHeader eyebrow="Trend Radar" title="Signals to turn into content" description="Mock source badges show where each trend would be validated when live integrations arrive." />

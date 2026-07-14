@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -35,6 +35,15 @@ class KnowledgeItem(Base):
     url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[str] = mapped_column(String(40), nullable=False, default="published")
+    freshness_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    authority_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    relevance_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    momentum_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    confidence_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    intelligence_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    priority: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    processing_status: Mapped[str] = mapped_column(String(40), nullable=False, default="Pending")
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

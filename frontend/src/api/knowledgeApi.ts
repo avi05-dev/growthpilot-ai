@@ -12,6 +12,17 @@ export type KnowledgeItem = {
   status: string;
   created_at: string;
   updated_at: string;
+  component_scores: {
+    freshness: number | null;
+    authority: number | null;
+    relevance: number | null;
+    momentum: number | null;
+    confidence: number | null;
+  };
+  overall_score: number | null;
+  priority: string | null;
+  processing_status: string;
+  processed_at: string | null;
 };
 
 export type KnowledgeResponse = {
