@@ -1,4 +1,20 @@
 services:
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: growthpilot
+    volumes:
+      - growthpilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d growthpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./backend
@@ -7,6 +23,11 @@ services:
     environment:
       GROWTHPILOT_ENVIRONMENT: development
       GROWTHPILOT_CORS_ORIGINS: '["http://localhost:5173", "http://localhost:3000", "http://localhost"]'
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/growthpilot
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "python -m alembic upgrade head && python -m scripts.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
   frontend:
     build:
@@ -17,3 +38,6 @@ services:
       - "5173:80"
     depends_on:
       - backend
+
+volumes:
+  growthpilot_pgdata:

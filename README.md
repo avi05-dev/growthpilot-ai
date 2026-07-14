@@ -70,6 +70,7 @@ docker compose up --build
 
 Frontend: http://localhost:5173
 Backend: http://localhost:8000
+PostgreSQL: localhost:5432
 
 ## API Documentation
 
@@ -102,3 +103,4 @@ uvicorn app.main:app --reload
 ```
 
 Frontend data fetching continues to use React Query against the FastAPI endpoints.
+When using Docker Compose, Postgres, migrations, and seed data all start with the stack.
