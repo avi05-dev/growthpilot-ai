@@ -1,17 +1,30 @@
-# GPS-0004B Review
+# GPS-0005 Review
 
-## Implemented
+## Implemented in this PR
 
-- Added reusable Knowledge Intelligence Engine module.
-- Added Technology domain registry without hardcoding Technology rules in the engine.
-- Extended KnowledgeItem persistence and Alembic migration with component scores, overall score, priority, processing status, and processed timestamp.
-- Added repository-backed intelligence service and orchestration pipeline.
-- Added intelligence process and health APIs.
-- Extended knowledge API responses with intelligence fields.
-- Updated dashboard to display overall score, priority, processing status, and expandable component scores.
-- Added backend tests for scoring, ranking, pipeline, repository/service behavior, and APIs.
-- Updated README and documentation.
+- LangGraph runtime foundation with configurable workflow step loading.
+- Planner Agent for resolving workflow and domain profile configuration.
+- Knowledge Agent with cache lookup, provider invocation, structured response construction, memory persistence, and execution logging.
+- Search Provider abstraction with a configured deterministic provider.
+- LLM Provider abstraction with a deterministic provider that avoids external LLM calls while preserving replaceable provider boundaries.
+- PostgreSQL Agent Memory model and Alembic migration.
+- `POST /api/workspace/generate` Workspace API.
+- React Workspace integration for domain, goal, time window, generation, loading, error, summary, findings, actions, sources, generated timestamp, and cache status.
+- Domain profile and workflow YAML configuration.
+- API and service/repository tests for the workspace and memory flow.
+- README, Architecture diagrams, and changelog updates.
 
-## Non-goals preserved
+## Intentional scope boundaries
 
-No recommendation engine, LLM provider integration, content generation, scheduling, background workers, authentication, or publishing was added.
+- Recommendation Agent is not implemented.
+- Content Agent is not implemented.
+- Publisher Agent is not implemented.
+- Analytics Agent is not implemented.
+- External search APIs and external LLM APIs are not called directly by the Knowledge Agent.
+
+## Follow-up PR plan
+
+1. Provider hardening and provider-specific adapters.
+2. Recommendation Agent and recommendation workflow configuration.
+3. Content Agent and content workflow configuration.
+4. Publisher/Analytics agent foundations and observability dashboards.

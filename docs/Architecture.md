@@ -32,20 +32,47 @@ The primary flow is:
 
 The AI, LLM, external API, and recommendation-generation layers remain intentionally out of scope for this increment.
 
-## GPS-0004B Knowledge Intelligence Architecture
+## GPS-0005 Agent Platform
 
-The Knowledge Intelligence Engine is implemented as a reusable backend module under `backend/app/intelligence`. It does not contain Technology-specific rules. Domain configuration is supplied by `backend/app/domain/registry.py`, which currently registers the `technology` domain and prepares the codebase for future YAML or JSON domain configuration.
-
-```text
-FastAPI Intelligence API
-  ↓
-KnowledgeIntelligencePipeline
-  ↓
-KnowledgeIntelligenceService
-  ↓
-KnowledgeRepository
-  ↓
-KnowledgeItem persistence
+```mermaid
+flowchart TD
+  React[React Workspace] --> API[FastAPI API]
+  API --> Runtime[LangGraph Runtime]
+  Runtime --> Planner[Planner Agent]
+  Planner --> Knowledge[Knowledge Agent]
+  Knowledge --> Search[Search Provider]
+  Knowledge --> LLM[LLM Provider]
+  Knowledge --> Memory[(PostgreSQL Agent Memory)]
+  Memory --> Response[Workspace Response]
+  Response --> React
 ```
 
-The pipeline validates the item's domain, normalizes scoring inputs through the registry configuration, calculates component scores, computes the weighted overall score, assigns priority, persists the fields, and marks processing as completed or failed.
+The GPS-0005 workflow treats PostgreSQL as agent memory and cache, not as the primary knowledge source. The Planner selects a configured workflow, the Knowledge Agent checks memory, invokes replaceable providers when needed, stores structured intelligence, and returns a workspace response.
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant React as React Workspace
+  participant API as FastAPI
+  participant Graph as LangGraph Runtime
+  participant Planner as Planner Agent
+  participant Knowledge as Knowledge Agent
+  participant Search as Search Provider
+  participant LLM as LLM Provider
+  participant Memory as PostgreSQL Memory
+
+  User->>React: Generate Intelligence
+  React->>API: POST /api/workspace/generate
+  API->>Graph: Generate request
+  Graph->>Planner: Resolve configured workflow
+  Planner->>Knowledge: Execute knowledge step
+  Knowledge->>Memory: Check valid cache
+  alt Cache miss
+    Knowledge->>Search: Search configured domain profile
+    Knowledge->>LLM: Complete structured intelligence
+    Knowledge->>Memory: Persist response with expiration
+  end
+  Knowledge->>Graph: Workspace intelligence
+  Graph->>API: Workspace response
+  API->>React: Summary, findings, actions, sources, cache status
+```

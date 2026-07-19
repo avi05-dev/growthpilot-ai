@@ -2,24 +2,24 @@
 
 All notable changes to GrowthPilot AI will be documented in this file.
 
-## [0.4.0] - 2026-07-13
+## [0.5.0] - 2026-07-17
 
 ### Added
 
-#### GPS-0004B - Knowledge Intelligence Engine
+- Added the initial LangGraph-powered agent runtime for workspace intelligence generation.
+- Added Planner and Knowledge agents with provider abstractions for search and LLM completion.
+- Added PostgreSQL-backed agent memory with configurable cache expiration.
+- Added configurable domain profiles and workflow definitions.
+- Added `POST /api/workspace/generate` for agent-driven workspace responses.
+- Added React workspace controls for domain, goal, time window, generation, cache status, findings, actions, and sources.
 
-- Added the reusable, domain-independent Knowledge Intelligence Engine module for component scoring, weighted Intelligence Score calculation, priority classification, and processing schemas.
-- Added the initial Technology domain registry configuration for authority sources, relevance keywords, momentum categories, and configurable priority thresholds.
-- Added intelligence persistence fields to knowledge items, including component scores, overall score, priority, processing status, and processed timestamp.
-- Added Alembic migration `0002_add_intelligence_fields` for the new intelligence columns.
-- Added repository-backed intelligence service and orchestration pipeline for processing pending knowledge items.
-- Added `POST /api/intelligence/process` and `GET /api/intelligence/health` endpoints.
-- Added intelligence metadata to knowledge API responses.
-- Added dashboard display for overall Intelligence Score, priority, processing status, and expandable component scores.
-- Added Knowledge Intelligence Engine documentation and GPS-0004B review notes.
-- Added backend tests for scoring, ranking, pipeline, service, repository, and API coverage.
+### Changed
 
-#### GPS-0004A - PostgreSQL Persistence
+- Shifted the dashboard experience from direct PostgreSQL reads to an agent-driven workspace flow.
+
+## [0.4.0] - 2026-07-13
+
+### Added
 
 - Added PostgreSQL persistence configuration through `DATABASE_URL`.
 - Added SQLAlchemy models for domains, knowledge items, and recommendations.

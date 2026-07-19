@@ -1,3 +1,3 @@
-from app.models.database import Base, Domain, KnowledgeItem, Recommendation
+from app.models.database import AgentMemory, Base, Domain, KnowledgeItem, Recommendation
 
-__all__ = ["Base", "Domain", "KnowledgeItem", "Recommendation"]
+__all__ = ["AgentMemory", "Base", "Domain", "KnowledgeItem", "Recommendation"]
