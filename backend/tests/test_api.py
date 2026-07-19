@@ -1,23 +1,62 @@
+from collections.abc import Generator
+
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
+from app.db.session import get_db
 from app.main import app
+from app.models.database import Base, Domain, KnowledgeItem, Recommendation
 
-client = TestClient(app)
+
+@pytest.fixture()
+def db_session() -> Generator[Session, None, None]:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    TestingSessionLocal = sessionmaker(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    db = TestingSessionLocal()
+    try:
+        db.add(Domain(id="technology", name="technology", display_name="Technology", description="Technology domain", is_enabled=True))
+        items = []
+        for index in range(10):
+            item = KnowledgeItem(id=f"knowledge-{index}", domain="technology", title=f"Signal {index}", summary=f"Summary {index}", source="GitHub", category=["AI", "Development", "Career"][index % 3], status="published")
+            items.append(item)
+            db.add(item)
+        db.flush()
+        for index, item in enumerate(items):
+            db.add(Recommendation(id=f"recommendation-{index}", knowledge_item_id=item.id, priority=["High", "Medium", "Low"][index % 3], recommended_action=f"Action {index}", reason=f"Reason {index}", estimated_effort="30 minutes", content_opportunity=f"Opportunity {index}"))
+        db.commit()
+        yield db
+    finally:
+        db.close()
 
 
-def test_health_endpoint() -> None:
+@pytest.fixture()
+def client(db_session: Session) -> Generator[TestClient, None, None]:
+    def override_get_db() -> Generator[Session, None, None]:
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_health_endpoint(client: TestClient) -> None:
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
 
 
-def test_version_endpoint() -> None:
+def test_version_endpoint(client: TestClient) -> None:
     response = client.get("/version")
     assert response.status_code == 200
-    assert response.json() == {"version": "0.3.0"}
+    assert response.json() == {"version": "0.5.0"}
 
 
-def test_dashboard_endpoint() -> None:
+def test_dashboard_endpoint(client: TestClient) -> None:
     response = client.get("/api/dashboard")
     assert response.status_code == 200
     payload = response.json()
@@ -26,17 +65,46 @@ def test_dashboard_endpoint() -> None:
     assert len(payload["kpis"]) == 4
 
 
-def test_trends_endpoint() -> None:
+def test_domains_endpoint(client: TestClient) -> None:
+    response = client.get("/api/domains")
+    assert response.status_code == 200
+    assert response.json()["domains"][0]["name"] == "technology"
+
+
+def test_knowledge_endpoints(client: TestClient) -> None:
+    response = client.get("/api/knowledge")
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["knowledge"]) == 10
+    detail = client.get(f"/api/knowledge/{payload['knowledge'][0]['id']}")
+    assert detail.status_code == 200
+
+
+def test_trends_endpoint(client: TestClient) -> None:
     response = client.get("/api/trends")
     assert response.status_code == 200
     payload = response.json()
     assert len(payload["trends"]) == 9
-    assert payload["trends"][0]["category"] == "AI"
 
 
-def test_recommendations_endpoint() -> None:
+def test_recommendations_endpoint(client: TestClient) -> None:
     response = client.get("/api/recommendations")
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload["recommendations"]) == 3
-    assert payload["recommendations"][0]["channel"] == "LinkedIn"
+    assert len(payload["recommendations"]) == 10
+    assert payload["recommendations"][0]["channel"] in {"AI", "Development", "Career"}
+
+
+def test_workspace_generate_endpoint(client: TestClient) -> None:
+    response = client.post("/api/workspace/generate", json={"domain": "technology", "goal": "career_growth", "time_window": "24h"})
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["summary"]
+    assert payload["top_findings"]
+    assert payload["recommended_actions"]
+    assert payload["sources"]
+    assert payload["cache_hit"] is False
+
+    cached_response = client.post("/api/workspace/generate", json={"domain": "technology", "goal": "career_growth", "time_window": "24h"})
+    assert cached_response.status_code == 200
+    assert cached_response.json()["cache_hit"] is True

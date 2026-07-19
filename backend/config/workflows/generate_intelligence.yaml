@@ -1,0 +1,4 @@
+name: generate_intelligence
+steps:
+  - planner
+  - knowledge

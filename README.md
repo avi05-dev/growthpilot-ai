@@ -88,3 +88,30 @@ When the backend is running:
 ## Release Notes
 
 See [CHANGELOG.md](./CHANGELOG.md) for release history.
+
+## GPS-0004A PostgreSQL persistence
+
+The app now reads dashboard, trend, domain, knowledge, and recommendation data through database-backed FastAPI services.
+
+```bash
+cd backend
+export DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/growthpilot
+alembic upgrade head
+python -m scripts.seed
+uvicorn app.main:app --reload
+```
+
+Frontend data fetching continues to use React Query against the FastAPI endpoints.
+
+## GPS-0005 Agent Workspace
+
+The workspace can generate agent-driven intelligence through LangGraph:
+
+```bash
+cd backend
+export DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/growthpilot
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+Then run the frontend and use the Generate Intelligence button. The current workflow is configured in `backend/config/workflows/generate_intelligence.yaml` and domain profiles live under `backend/config/domains`.

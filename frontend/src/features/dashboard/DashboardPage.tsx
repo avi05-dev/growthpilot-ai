@@ -1,171 +1,144 @@
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import { Box, Button, Chip, Grid, Stack, Typography } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import CachedIcon from '@mui/icons-material/Cached';
+import SourceIcon from '@mui/icons-material/Source';
+import { Alert, Box, Button, Chip, FormControl, Grid, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import { DashboardApi } from '../../api/dashboardApi';
-import { RecommendationApi } from '../../api/recommendationApi';
-import { TrendApi } from '../../api/trendApi';
-import { ActionItem } from './components/ActionItem';
+import { WorkspaceApi, type WorkspaceGenerateRequest } from '../../api/workspaceApi';
 import { DashboardCard } from './components/DashboardCard';
-import { DashboardSkeleton, EmptyState, ErrorState } from './components/StateBlock';
 import { HeroHeader } from './components/HeroHeader';
-import { KpiCard } from './components/KpiCard';
 import { SectionHeader } from './components/SectionHeader';
-import { TrendCard } from './components/TrendCard';
-import type { TrendCategory } from './types/dashboard';
+import { DashboardSkeleton, EmptyState } from './components/StateBlock';
 
-const trendCategories: TrendCategory[] = ['AI', 'Development', 'Career'];
+const domains = [{ value: 'technology', label: 'Technology' }];
+const goals = [{ value: 'career_growth', label: 'Career Growth' }];
+const timeWindows = [
+  { value: '24h', label: 'Last 24 hours' },
+  { value: '7d', label: 'Last 7 days' },
+];
 
 export function DashboardPage() {
-  const dashboardQuery = useQuery({ queryKey: ['dashboard'], queryFn: DashboardApi.getDashboard });
-  const trendsQuery = useQuery({ queryKey: ['trends'], queryFn: TrendApi.getTrends });
-  const recommendationsQuery = useQuery({ queryKey: ['recommendations'], queryFn: RecommendationApi.getRecommendations });
+  const [request, setRequest] = useState<WorkspaceGenerateRequest>({ domain: 'technology', goal: 'career_growth', time_window: '24h' });
+  const workspaceMutation = useMutation({ mutationFn: WorkspaceApi.generate });
 
-  const isLoading = dashboardQuery.isLoading || trendsQuery.isLoading || recommendationsQuery.isLoading;
-  const isError = dashboardQuery.isError || trendsQuery.isError || recommendationsQuery.isError;
-
-  const refreshDashboard = () => {
-    void dashboardQuery.refetch();
-    void trendsQuery.refetch();
-    void recommendationsQuery.refetch();
-  };
-
-  const trends = trendsQuery.data?.trends ?? [];
-  const recommendations = recommendationsQuery.data?.recommendations ?? [];
-  const dashboardData = dashboardQuery.data;
-
-  const trendsByCategory = useMemo(() => {
-    return trendCategories.map((category) => ({
-      category,
-      trends: trends.filter((trend) => trend.category === category),
-    }));
-  }, [trends]);
-
-  const hasNoData = trends.length === 0 && recommendations.length === 0 && dashboardData?.actionTasks.length === 0;
+  const generate = () => workspaceMutation.mutate(request);
+  const intelligence = workspaceMutation.data;
 
   return (
     <Stack spacing={{ xs: 3, md: 4 }}>
-      <HeroHeader onRefresh={refreshDashboard} />
+      <HeroHeader onRefresh={generate} />
 
-      {isLoading ? <DashboardSkeleton /> : null}
-      {isError ? <ErrorState onRetry={refreshDashboard} /> : null}
-      {!isLoading && !isError && hasNoData ? <EmptyState title="No growth signals yet" description="Your workspace is ready, but the API returned no growth signals to display." /> : null}
+      <DashboardCard>
+        <Stack spacing={3}>
+          <SectionHeader eyebrow="Agent Workspace" title="Generate Intelligence" description="Planner and Knowledge agents produce cache-aware workspace intelligence from configured providers." />
+          <Grid container spacing={2.5}>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel id="domain-label">Domain</InputLabel>
+                <Select labelId="domain-label" label="Domain" value={request.domain} onChange={(event) => setRequest((current) => ({ ...current, domain: event.target.value }))}>
+                  {domains.map((domain) => (
+                    <MenuItem key={domain.value} value={domain.value}>
+                      {domain.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel id="goal-label">Goal</InputLabel>
+                <Select labelId="goal-label" label="Goal" value={request.goal} onChange={(event) => setRequest((current) => ({ ...current, goal: event.target.value }))}>
+                  {goals.map((goal) => (
+                    <MenuItem key={goal.value} value={goal.value}>
+                      {goal.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel id="time-window-label">Time Window</InputLabel>
+                <Select labelId="time-window-label" label="Time Window" value={request.time_window} onChange={(event) => setRequest((current) => ({ ...current, time_window: event.target.value }))}>
+                  {timeWindows.map((timeWindow) => (
+                    <MenuItem key={timeWindow.value} value={timeWindow.value}>
+                      {timeWindow.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Button variant="contained" size="large" startIcon={<AutoAwesomeIcon />} onClick={generate} disabled={workspaceMutation.isPending}>
+            {workspaceMutation.isPending ? 'Generating…' : 'Generate Intelligence'}
+          </Button>
+        </Stack>
+      </DashboardCard>
 
-      {!isLoading && !isError && dashboardData ? (
-        <Stack spacing={{ xs: 3, md: 4 }}>
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} lg={7}>
+      {workspaceMutation.isPending ? <DashboardSkeleton /> : null}
+      {workspaceMutation.isError ? <Alert severity="error">Unable to generate workspace intelligence. Please try again.</Alert> : null}
+      {!workspaceMutation.isPending && !workspaceMutation.isError && !intelligence ? <EmptyState title="No intelligence generated yet" description="Choose your workspace inputs and run the agent workflow to generate fresh intelligence." /> : null}
+
+      {intelligence ? (
+        <Stack spacing={3}>
+          <DashboardCard>
+            <Stack spacing={2}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Chip icon={<CachedIcon />} label={intelligence.cache_hit ? 'Cache hit' : 'Fresh generation'} color={intelligence.cache_hit ? 'success' : 'secondary'} />
+                <Typography variant="body2" color="text.secondary">
+                  Generated {new Date(intelligence.generated_at).toLocaleString()} · Expires {new Date(intelligence.expires_at).toLocaleString()}
+                </Typography>
+              </Stack>
+              <Typography variant="h5">Summary</Typography>
+              <Typography>{intelligence.summary}</Typography>
+            </Stack>
+          </DashboardCard>
+
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
               <DashboardCard>
-                <Stack spacing={3}>
-                  <SectionHeader eyebrow="AI Daily Briefing" title={dashboardData.briefing.title} description="A concise operating brief for deciding what to do today." />
-                  <Stack component="ul" spacing={1.5} sx={{ pl: 0, m: 0 }}>
-                    {dashboardData.briefing.items.map((item) => (
-                      <Stack key={item.id} component="li" direction="row" spacing={1.5} sx={{ listStyle: 'none' }}>
-                        <AutoAwesomeIcon color="secondary" fontSize="small" />
-                        <Typography>{item.text}</Typography>
-                      </Stack>
-                    ))}
-                  </Stack>
-                  <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2.5, bgcolor: 'background.default' }}>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="space-between">
-                      <Box>
-                        <Typography variant="body2" color="text.secondary" fontWeight={800}>
-                          Best posting window
-                        </Typography>
-                        <Typography variant="h6" sx={{ mt: 0.5 }}>
-                          {dashboardData.briefing.bestPostingWindow}
-                        </Typography>
-                      </Box>
-                      <CalendarMonthIcon color="secondary" aria-hidden="true" />
-                    </Stack>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" fontWeight={800}>
-                      Recommended Focus
+                <SectionHeader eyebrow="Knowledge Agent" title="Top Findings" description="Structured findings synthesized from configured search and LLM providers." />
+                <Stack component="ul" spacing={1.5} sx={{ pl: 2 }}>
+                  {intelligence.top_findings.map((finding) => (
+                    <Typography key={finding} component="li">
+                      {finding}
                     </Typography>
-                    <Typography variant="h6" component="p" sx={{ mt: 0.75 }}>
-                      {dashboardData.briefing.recommendedFocus}
-                    </Typography>
-                  </Box>
+                  ))}
                 </Stack>
               </DashboardCard>
             </Grid>
-
-            <Grid item xs={12} lg={5}>
+            <Grid item xs={12} md={6}>
               <DashboardCard>
-                <Stack spacing={3}>
-                  <SectionHeader eyebrow="Content Studio" title="Preview" description="Draft recommendations prepared from today's strongest signals." />
-                  <Stack spacing={2}>
-                    {recommendations.map((recommendation) => (
-                      <Box key={recommendation.id} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 2 }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
-                          <Box>
-                            <Chip label={recommendation.channel} size="small" variant="outlined" />
-                            <Typography variant="h6" component="h3" sx={{ mt: 1 }}>
-                              {recommendation.topic}
-                            </Typography>
-                          </Box>
-                          <Button variant="contained" size="small" startIcon={<EditNoteIcon />} aria-label={`${recommendation.actionLabel} for ${recommendation.topic}`}>
-                            {recommendation.actionLabel}
-                          </Button>
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Stack>
+                <SectionHeader eyebrow="Planner Output" title="Recommended Actions" description="Immediate actions for the selected goal and time window." />
+                <Stack component="ul" spacing={1.5} sx={{ pl: 2 }}>
+                  {intelligence.recommended_actions.map((action) => (
+                    <Typography key={action} component="li">
+                      {action}
+                    </Typography>
+                  ))}
                 </Stack>
               </DashboardCard>
             </Grid>
           </Grid>
 
-          <Box component="section" aria-labelledby="trend-radar-heading">
-            <SectionHeader eyebrow="Trend Radar" title="Signals to turn into content" description="Mock source badges show where each trend would be validated when live integrations arrive." />
-            <Stack spacing={3} sx={{ mt: 3 }}>
-              {trendsByCategory.map(({ category, trends: categoryTrends }) => (
-                <Box key={category}>
-                  <Typography id={category === 'AI' ? 'trend-radar-heading' : undefined} variant="h6" component="h3" sx={{ mb: 2 }}>
-                    {category}
+          <DashboardCard>
+            <SectionHeader eyebrow="Sources" title="Provider Results" description="Search provider outputs used by the agent workflow." />
+            <Stack spacing={1.5}>
+              {intelligence.sources.map((source) => (
+                <Box key={source.url} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2 }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <SourceIcon color="secondary" fontSize="small" />
+                    <Typography fontWeight={800}>{source.title}</Typography>
+                    <Chip label={source.provider} size="small" variant="outlined" />
+                  </Stack>
+                  <Typography component="a" href={source.url} target="_blank" rel="noreferrer" color="secondary" sx={{ display: 'inline-block', mt: 1 }}>
+                    {source.url}
                   </Typography>
-                  <Grid container spacing={2.5}>
-                    {categoryTrends.map((trend) => (
-                      <Grid key={trend.id} item xs={12} md={6} xl={4}>
-                        <TrendCard trend={trend} />
-                      </Grid>
-                    ))}
-                  </Grid>
                 </Box>
               ))}
             </Stack>
-          </Box>
-
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} lg={6}>
-              <DashboardCard>
-                <Stack spacing={3}>
-                  <SectionHeader eyebrow="Action Center" title="What should I do today?" description="A prioritized plan for learning, creating, and publishing." />
-                  <Stack component="ul" spacing={1.5} sx={{ p: 0, m: 0 }}>
-                    {dashboardData.actionTasks.map((task) => (
-                      <ActionItem key={task.id} task={task} />
-                    ))}
-                  </Stack>
-                </Stack>
-              </DashboardCard>
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Stack spacing={3}>
-                <SectionHeader eyebrow="Growth Snapshot" title="This week's momentum" description="Reusable KPI cards prepared for future analytics APIs." />
-                <Grid container spacing={2.5}>
-                  {dashboardData.kpis.map((metric) => (
-                    <Grid key={metric.id} item xs={12} sm={6}>
-                      <KpiCard metric={metric} />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Stack>
-            </Grid>
-          </Grid>
+          </DashboardCard>
         </Stack>
       ) : null}
     </Stack>
