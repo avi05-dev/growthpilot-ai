@@ -78,6 +78,86 @@ When the backend is running:
 - Swagger UI: http://localhost:8000/docs
 - OpenAPI JSON: http://localhost:8000/openapi.json
 
+## Debug a UI request in VS Code
+
+The repository includes a VS Code debug configuration at `.vscode/launch.json`.
+It starts the FastAPI backend with the working directory set to `backend/`.
+
+### One-time setup
+
+1. Install the VS Code **Python** extension.
+2. In VS Code, run **Python: Select Interpreter** and select
+   `backend/.venv/bin/python`.
+3. Set up the backend database and seed it:
+
+   ```bash
+   cd backend
+   source .venv/bin/activate
+   cp .env.example .env
+   alembic upgrade head
+   python -m scripts.seed
+   ```
+
+4. In a second VS Code terminal, start the frontend:
+
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env
+   npm run dev
+   ```
+
+### Run and step through a real browser request
+
+1. Set a breakpoint in `backend/app/api/workspace.py` on the
+   `return await service.generate(request)` line. Optionally set another in
+   `backend/app/services/workspace_service.py` inside `generate`.
+2. Open **Run and Debug** (`Cmd+Shift+D` on macOS), select **Debug FastAPI
+   backend**, and press `F5`.
+3. Open http://localhost:5173/dashboard in a browser.
+4. In the **Generate Intelligence** card, click **Generate Intelligence**.
+   The frontend sends `POST /api/workspace/generate`, and VS Code pauses at
+   the breakpoint.
+5. Use the debug controls to inspect `request` and step through the backend:
+
+   - `F10` — step over
+   - `F11` — step into a function
+   - `Shift+F11` — step out
+   - `F5` — continue
+   - `Shift+F5` — stop
+
+If the frontend reports a network error, confirm both terminals are running:
+the frontend must be on port 5173 and the VS Code backend debugger must be on
+port 8000. The browser's Network tab will show the corresponding API request.
+
+### Debug with Docker Compose
+
+To run the backend in Docker and attach VS Code to it, start the debug Compose
+overlay from the repository root:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build
+```
+
+This assumes PostgreSQL is running on your machine at `localhost:5432` and
+that migrations and seed data have been applied. The debug overlay translates
+that address to `host.docker.internal` for the container. To use another
+database, set `DATABASE_URL` before running the command.
+
+The backend waits for the debugger on port `5678`. In VS Code, open **Run and
+Debug**, select **Attach to FastAPI backend (Docker)**, and press `F5`. The API
+then starts on port `8000`, and the frontend is available at
+http://localhost:5173.
+
+Set a breakpoint in `backend/app/api/workspace.py`, open the dashboard, and
+click **Generate Intelligence** to step through the actual browser request.
+The source mapping between `backend/` on your machine and `/app` in the
+container is already configured. Stop the containers with `Ctrl+C` or run:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.debug.yml down
+```
+
 ## Documentation
 
 - [Architecture](./docs/Architecture.md)

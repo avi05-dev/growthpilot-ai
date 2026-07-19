@@ -7,6 +7,8 @@ alembic==1.13.3
 pytest==8.3.3
 httpx==0.27.2
 python-json-logger==2.0.7
+debugpy==1.8.14
+pydevd-pycharm==253.31033.139
 
 psycopg[binary]==3.2.3
 
