@@ -14,6 +14,7 @@ npm run dev
 ## Backend
 
 ```bash
+docker compose up -d db
 cd backend
 python -m venv .venv
 source .venv/bin/activate

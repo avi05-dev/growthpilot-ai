@@ -26,9 +26,10 @@ pytest
 
 1. Open the repository root in VS Code and install the **Python** extension.
 2. Run **Python: Select Interpreter** and choose `backend/.venv/bin/python`.
-3. Set up the database before starting the API:
+3. Start PostgreSQL and set up the database before starting the API:
 
    ```bash
+   docker compose up -d db
    cp .env.example .env
    alembic upgrade head
    python -m scripts.seed
@@ -68,9 +69,8 @@ overlay:
 docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build
 ```
 
-PostgreSQL must be running on the host and have the migrations and seed data
-applied. The overlay uses `host.docker.internal` to reach the host database;
-set `DATABASE_URL` before the command to use another database.
+Compose starts PostgreSQL, applies migrations, and runs the idempotent seed
+script before the debugger is available.
 
 The backend waits for VS Code on port `5678`. In VS Code, select **Attach to
 FastAPI backend (Docker)** in **Run and Debug** and press `F5`. The attached

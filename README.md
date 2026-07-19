@@ -88,9 +88,10 @@ It starts the FastAPI backend with the working directory set to `backend/`.
 1. Install the VS Code **Python** extension.
 2. In VS Code, run **Python: Select Interpreter** and select
    `backend/.venv/bin/python`.
-3. Set up the backend database and seed it:
+3. Start PostgreSQL, then set up and seed the backend database:
 
    ```bash
+   docker compose up -d db
    cd backend
    source .venv/bin/activate
    cp .env.example .env
@@ -139,10 +140,10 @@ overlay from the repository root:
 docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build
 ```
 
-This assumes PostgreSQL is running on your machine at `localhost:5432` and
-that migrations and seed data have been applied. The debug overlay translates
-that address to `host.docker.internal` for the container. To use another
-database, set `DATABASE_URL` before running the command.
+Compose starts PostgreSQL, applies the Alembic migrations, and runs the
+idempotent seed script before it starts the debugger. This prevents requests
+paused in VS Code from failing because a table or the initial records are
+missing.
 
 The backend waits for the debugger on port `5678`. In VS Code, open **Run and
 Debug**, select **Attach to FastAPI backend (Docker)**, and press `F5`. The API
